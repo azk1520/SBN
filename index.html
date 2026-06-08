@@ -7,7 +7,7 @@
     
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="#1e1e1e">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#151618">
     <meta name="apple-mobile-web-app-title" content="SBN">
     <link rel="apple-touch-icon" href="icon.png">
 
@@ -18,16 +18,16 @@
             background-color: #151618; /* Obsidian deep base */
             color: #dcddde;
             margin: 0;
-            padding: 40px 20px;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 80vh;
+            min-height: 90vh;
         }
         
         .container {
             background: #202225; /* Dark container card */
-            padding: 40px;
+            padding: 30px;
             border-radius: 12px;
             border: 1px solid #2f3136;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
@@ -79,7 +79,7 @@
         
         .form-group { text-align: left; margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; font-size: 14px; color: #b9bbbe; }
-        input, select, textarea { width: 100%; padding: 12px; background-color: #18191c; color: #dcddde; border: 1px solid #2f3136; border-radius: 6px; box-sizing: border-box; }
+        input, select, textarea { width: 100%; padding: 12px; background-color: #18191c; color: #dcddde; border: 1px solid #2f3136; border-radius: 6px; box-sizing: border-box; font-size: 15px; }
         input:focus, select:focus, textarea:focus { border-color: #7289da; outline: none; }
 
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
@@ -88,6 +88,17 @@
 
         .pay-box { background-color: #18191c; border: 1px solid #2f3136; border-radius: 10px; padding: 30px; text-align: center; margin-top: 20px; }
         .price { font-size: 36px; color: #ffffff; font-weight: bold; margin: 15px 0; }
+
+        /* Custom iOS Setup Bar Instruction Box */
+        .ios-tip {
+            background-color: #18191c;
+            border-left: 4px solid #00ffff;
+            padding: 15px;
+            margin-top: 25px;
+            border-radius: 4px;
+            text-align: left;
+            font-size: 13px;
+        }
 
         .preview-box {
             background-color: #ffffff;
@@ -125,6 +136,12 @@
         <div class="btn-group">
             <button class="btn" onclick="showForm('manual')">Build It Myself</button>
             <button class="btn btn-primary" onclick="showForm('ai')">Build With AI</button>
+        </div>
+
+        <div class="ios-tip">
+            <strong style="color: #ffffff;">📲 Install App Shortcut:</strong><br>
+            • <strong>iPhone:</strong> Open this link in the real <span style="color:#00ffff;">Safari app</span>, tap the <strong>Share button</strong> (square with up arrow), scroll down and tap <strong>"Add to Home Screen"</strong>.<br>
+            • <strong>Android:</strong> Tap the "Add to Home screen" pop-up banner at the bottom of Chrome.
         </div>
     </div>
 
@@ -168,10 +185,8 @@
         <div class="pay-box">
             <h3 style="color: #faa61a;">Premium Plan</h3>
             <p>Access all templates and custom logic features.</p>
-            <div class="price">$9 / month</div>
-            <a href="https://buy.stripe.com/mock_payment_link" target="_blank" style="text-decoration: none;">
-                <button class="btn btn-premium">Upgrade Now</button>
-            </a>
+            <div class="price">$5 / month</div>
+            <button class="btn btn-premium" onclick="triggerPaymentMock()">Upgrade Now</button>
         </div>
     </div>
 </div>
@@ -245,6 +260,10 @@
         document.getElementById('premium-screen').classList.add('hidden');
         document.getElementById('main-nav').classList.remove('hidden');
         document.getElementById(previousScreen).classList.remove('hidden');
+    }
+
+    function triggerPaymentMock() {
+        alert("Payment System Demo:\nIn a production environment, this triggers your live active Stripe Checkout portal! Setup your genuine product API key when ready to process customer cards.");
     }
 </script>
 
