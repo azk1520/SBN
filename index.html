@@ -141,11 +141,17 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         .modal-card h3 { color: #1e1e1e; margin-bottom: 15px; }
-        .modal-close {
-            background: #f0f1f2; border: none; color: #4f545c; padding: 8px 16px;
-            border-radius: 4px; cursor: pointer; float: right; margin-top: 15px;
+        .modal-action-btn {
+            background: #2ea44f; color: white; border: none; padding: 12px 20px;
+            border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%;
+            font-size: 15px; margin-top: 10px; transition: background 0.2s;
         }
-        .modal-close:hover { background: #e3e5e8; }
+        .modal-action-btn:hover { background: #2c974b; }
+        .modal-close {
+            background: none; border: none; color: #586069; padding: 8px;
+            cursor: pointer; float: right; margin-top: 10px; font-size: 13px; width: 100%; text-align: center;
+        }
+        .modal-close:hover { color: #24292e; text-decoration: underline; }
 
         .hidden { display: none; }
     </style>
@@ -225,7 +231,7 @@
                         <li>15 Days Hosting Window</li>
                     </ul>
                 </div>
-                <button class="btn-startup" onclick="openPaymentModal('Start-up Plan', '$5.00', '15 Days Tier Access')">Select Start-up</button>
+                <button class="btn-startup" onclick="openPaymentModal('Start-up Plan', '$5.00', '15 Days Tier Access', 'https://buy.stripe.com/your_5_dollar_link_here')">Select Start-up</button>
             </div>
 
             <div class="pricing-tier featured">
@@ -241,7 +247,7 @@
                         <li>Continuous Cloud Hosting</li>
                     </ul>
                 </div>
-                <button class="btn-premium" onclick="openPaymentModal('Premium Plan', '$10.00', 'Monthly Subscription')">Upgrade Premium</button>
+                <button class="btn-premium" onclick="openPaymentModal('Premium Plan', '$10.00', 'Monthly Subscription', 'https://buy.stripe.com/your_10_dollar_link_here')">Upgrade Premium</button>
             </div>
 
         </div>
@@ -250,25 +256,21 @@
 
 <div id="payment-modal" class="modal-overlay hidden">
     <div class="modal-card">
-        <h3>💳 Checkout Page</h3>
+        <h3>💳 Checkout Confirmation</h3>
         <p style="color: #4f545c; font-size: 14px;">You are upgrading to the <strong id="modal-plan-title">Plan Name</strong>.</p>
         <div style="background: #f6f8fa; padding: 15px; border-radius: 6px; margin: 15px 0; border: 1px solid #e1e4e8;">
             <span style="float: right; font-weight: bold; color: #2ea44f;" id="modal-plan-price">$0.00</span>
             <span id="modal-plan-type">Subscription Term</span>
         </div>
-        <div class="form-group">
-            <label style="color: #4f545c;">Card Information</label>
-            <input type="text" placeholder="4242 •••• •••• 4242" disabled style="background: #f6f8fa; color: #6a737d;">
-        </div>
-        <p style="font-size: 11px; color: #6a737d; margin-top: 10px;">
-            ⚠️ <strong>Sandbox Mode:</strong> This simulates a live responsive checkout portal interface. Integrate secure payment tokens upon linking merchant credentials.
-        </p>
-        <button class="modal-close" onclick="closePaymentModal()">Close Window</button>
+        
+        <button id="modal-pay-button" class="modal-action-btn" onclick="redirectToStripe()">Proceed to Secure Payment</button>
+        <button class="modal-close" onclick="closePaymentModal()">Cancel and Go Back</button>
     </div>
 </div>
 
 <script>
     let previousScreen = 'start-screen';
+    let activeStripeUrl = '';
 
     function showForm(mode) {
         document.getElementById('start-screen').classList.add('hidden');
@@ -293,6 +295,7 @@
         previousScreen = targetId;
     }
 
+    // Fixed functional syntax error block below
     function generateWebsite(styleName) {
         document.getElementById('template-screen').classList.add('hidden');
         document.getElementById('generation-screen').classList.remove('hidden');
@@ -338,15 +341,24 @@
         document.getElementById(previousScreen).classList.remove('hidden');
     }
 
-    function openPaymentModal(planTitle, planPrice, planType) {
+    function openPaymentModal(planTitle, planPrice, planType, stripeUrl) {
         document.getElementById('modal-plan-title').innerText = planTitle;
         document.getElementById('modal-plan-price').innerText = planPrice;
         document.getElementById('modal-plan-type').innerText = planType;
+        activeStripeUrl = stripeUrl;
         document.getElementById('payment-modal').classList.remove('hidden');
     }
 
     function closePaymentModal() {
         document.getElementById('payment-modal').classList.add('hidden');
+    }
+
+    function redirectToStripe() {
+        if(activeStripeUrl && !activeStripeUrl.includes('your_')) {
+            window.open(activeStripeUrl, '_blank');
+        } else {
+            alert("Payment link configuration needed!\nTo enable checkout, swap out the placeholder URL strings inside the template code buttons for your live active Stripe link objects.");
+        }
     }
 </script>
 
