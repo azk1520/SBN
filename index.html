@@ -46,19 +46,35 @@
             padding-bottom: 15px;
         }
 
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
         /* Branding SBN Colors - High Contrast Visibility */
         .brand-s { color: #00ffff; font-weight: bold; text-shadow: 0 0 10px rgba(0, 255, 255, 0.2); } /* Electric Cyan */
         .brand-b { color: #e5e4e2; font-weight: bold; } /* Platinum Silver */
         .brand-n { color: #b967ff; font-weight: bold; text-shadow: 0 0 10px rgba(185, 103, 255, 0.2); } /* Electric Purple */
 
-        .pricing-link {
+        .pricing-link, .lang-link {
             color: #faa61a;
             text-decoration: none;
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
+            user-select: none;
         }
-        .pricing-link:hover { color: #e09415; }
+        .pricing-link:hover, .lang-link:hover { color: #e09415; }
+        
+        .lang-link {
+            color: #00ffff;
+            border: 1px solid #2f3136;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        .lang-link:hover { color: #ffffff; border-color: #00ffff; }
 
         h1, h2, h3 { color: #ffffff; font-weight: 600; margin: 0; }
         p { color: #b9bbbe; line-height: 1.5; margin-top: 10px; }
@@ -83,12 +99,14 @@
         .back-link:hover { color: #ffffff; }
         
         .form-group { text-align: left; margin-bottom: 20px; }
+        .rtl .form-group { text-align: right; }
         label { display: block; margin-bottom: 8px; font-size: 14px; color: #b9bbbe; }
         input, select, textarea { width: 100%; padding: 12px; background-color: #18191c; color: #dcddde; border: 1px solid #2f3136; border-radius: 6px; box-sizing: border-box; font-size: 15px; }
         input:focus, select:focus, textarea:focus { border-color: #7289da; outline: none; }
 
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
         .card { background-color: #18191c; border: 2px solid #2f3136; border-radius: 8px; padding: 20px; text-align: left; cursor: pointer; }
+        .rtl .card { text-align: right; }
         .card:hover { border-color: #7289da; }
 
         /* Dual Pricing Columns Layout */
@@ -97,6 +115,7 @@
         .badge { background: #faa61a; color: #1e1e1e; font-size: 11px; font-weight: bold; padding: 2px 8px; border-radius: 20px; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); }
         .price { font-size: 28px; color: #ffffff; font-weight: bold; margin: 10px 0; }
         .feature-list { text-align: left; padding: 0; margin: 15px 0; list-style: none; font-size: 13px; color: #b9bbbe; }
+        .rtl .feature-list { text-align: right; }
         .feature-list li { margin-bottom: 8px; }
         .feature-list li::before { content: "• "; color: #7289da; }
         .pricing-tier.featured .feature-list li::before { color: #faa61a; }
@@ -110,6 +129,11 @@
             border-radius: 4px;
             text-align: left;
             font-size: 13px;
+        }
+        .rtl .ios-tip {
+            border-left: none;
+            border-right: 4px solid #00ffff;
+            text-align: right;
         }
 
         .preview-box {
@@ -140,6 +164,7 @@
             border-radius: 12px; max-width: 400px; width: 90%; text-align: left;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
+        .rtl .modal-card { text-align: right; }
         .modal-card h3 { color: #1e1e1e; margin-bottom: 15px; }
         .modal-action-btn {
             background: #2ea44f; color: white; border: none; padding: 12px 20px;
@@ -153,101 +178,125 @@
         }
         .modal-close:hover { color: #24292e; text-decoration: underline; }
 
+        /* RTL global utility directional modifier */
+        .rtl { direction: rtl; }
+
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="container" id="main-container">
     <div class="header-nav" id="main-nav">
         <h2>
             <span class="brand-s">S</span><span class="brand-b">B</span><span class="brand-n">N</span> 
             <span style="color: #ffffff; font-weight: 400;">Nexus</span>
         </h2>
-        <span class="pricing-link" onclick="openPricing()">Plans</span>
+        <div class="nav-links">
+            <span class="lang-link" onclick="toggleLanguage()" id="lang-toggle-btn">العربية</span>
+            <span class="pricing-link" onclick="openPricing()" id="nav-plans">Plans</span>
+        </div>
     </div>
 
     <div id="start-screen">
-        <p>Create a website for your business.</p>
+        <p id="start-subtitle">Create a website for your business.</p>
         <div class="btn-group">
-            <button class="btn" onclick="showForm('manual')">Build It Myself</button>
-            <button class="btn btn-primary" onclick="showForm('ai')">Build With AI</button>
+            <button class="btn" onclick="showForm('manual')" id="btn-manual">Build It Myself</button>
+            <button class="btn btn-primary" onclick="showForm('ai')" id="btn-ai">Build With AI</button>
         </div>
 
-        <div class="ios-tip">
-            <strong style="color: #ffffff;">📲 Install App Shortcut:</strong><br>
-            • <strong>iPhone:</strong> Open this link in the real <span style="color:#00ffff;">Safari app</span>, tap the <strong>Share button</strong> (square with up arrow), scroll down and tap <strong>"Add to Home Screen"</strong>.<br>
-            • <strong>Android:</strong> Tap the "Add to Home screen" pop-up banner at the bottom of Chrome.
+        <div class="ios-tip" id="ios-tip-box">
+            <strong style="color: #ffffff;" id="tip-title">📲 Install App Shortcut:</strong><br>
+            <span id="tip-desc-ios">• <strong>iPhone:</strong> Open this link in the real <span style="color:#00ffff;">Safari app</span>, tap the <strong>Share button</strong> (square with up arrow), scroll down and tap <strong>"Add to Home Screen"</strong>.</span><br>
+            <span id="tip-desc-android">• <strong>Android:</strong> Tap the "Add to Home screen" pop-up banner at the bottom of Chrome.</span>
         </div>
     </div>
 
     <div id="form-screen" class="hidden">
-        <span class="back-link" onclick="goBack('start-screen', 'form-screen')">← Back to main menu</span>
+        <span class="back-link" onclick="goBack('start-screen', 'form-screen')" id="back-to-main">← Back to main menu</span>
         <form id="biz-form">
-            <div class="form-group"><label>Business Name</label><input type="text" id="biz-name" placeholder="e.g., My Business Name" required></div>
             <div class="form-group">
-                <label>Business Type</label>
+                <label id="lbl-biz-name">Business Name</label>
+                <input type="text" id="biz-name" placeholder="e.g., My Business Name" required>
+            </div>
+            <div class="form-group">
+                <label id="lbl-biz-type">Business Type</label>
                 <select id="biz-type">
-                    <option value="Car Wash">Car Wash</option>
-                    <option value="Restaurant">Restaurant</option>
-                    <option value="Salon">Salon</option>
-                    <option value="Gym">Gym</option>
+                    <option value="Car Wash" id="opt-carwash">Car Wash</option>
+                    <option value="Restaurant" id="opt-restaurant">Restaurant</option>
+                    <option value="Salon" id="opt-salon">Salon</option>
+                    <option value="Gym" id="opt-gym">Gym</option>
                 </select>
             </div>
-            <div class="form-group"><label>Phone Number</label><input type="tel" id="biz-phone" placeholder="e.g., +971 50 123 4567"></div>
-            <div class="form-group"><label>Email Address</label><input type="email" id="biz-email" placeholder="e.g., info@mybusiness.com"></div>
-            <div class="form-group" id="desc-group"><label>Business Description</label><textarea id="biz-desc" rows="3" placeholder="Describe what your business does..."></textarea></div>
-            <button type="button" class="btn btn-primary" style="width: 100%;" onclick="goToTemplates()">Next: Choose Template →</button>
+            <div class="form-group">
+                <label id="lbl-biz-phone">Phone Number</label>
+                <input type="tel" id="biz-phone" placeholder="e.g., +971 50 123 4567">
+            </div>
+            <div class="form-group">
+                <label id="lbl-biz-email">Email Address</label>
+                <input type="email" id="biz-email" placeholder="e.g., info@mybusiness.com">
+            </div>
+            <div class="form-group" id="desc-group">
+                <label id="lbl-biz-desc">Business Description</label>
+                <textarea id="biz-desc" rows="3" placeholder="Describe what your business does..."></textarea>
+            </div>
+            <button type="button" class="btn btn-primary" style="width: 100%;" onclick="goToTemplates()" id="btn-next-template">Next: Choose Template →</button>
         </form>
     </div>
 
     <div id="template-screen" class="hidden">
-        <span class="back-link" onclick="goBack('form-screen', 'template-screen')">← Back to business info</span>
-        <p>Pick a template setup to match your company structure.</p>
+        <span class="back-link" onclick="goBack('form-screen', 'template-screen')" id="back-to-info">← Back to business info</span>
+        <p id="template-subtitle">Pick a template setup to match your company structure.</p>
         <div class="grid">
-            <div class="card" onclick="generateWebsite('minimal')"><h3>Minimal Stark</h3><p style="font-size: 13px;">Clean layout focusing heavily on info.</p></div>
-            <div class="card" onclick="generateWebsite('neon')"><h3>Cyber Neon</h3><p style="font-size: 13px;">Dark modern design with glowing styles.</p></div>
+            <div class="card" onclick="generateWebsite('minimal')">
+                <h3 id="tmpl-title-1">Minimal Stark</h3>
+                <p style="font-size: 13px;" id="tmpl-desc-1">Clean layout focusing heavily on info.</p>
+            </div>
+            <div class="card" onclick="generateWebsite('neon')">
+                <h3 id="tmpl-title-2">Cyber Neon</h3>
+                <p style="font-size: 13px;" id="tmpl-desc-2">Dark modern design with glowing styles.</p>
+            </div>
         </div>
     </div>
 
     <div id="generation-screen" class="hidden">
-        <span class="back-link" onclick="goBack('template-screen', 'generation-screen')">← Back to templates</span>
-        <h2>Your Website is Ready!</h2>
+        <span class="back-link" onclick="goBack('template-screen', 'generation-screen')" id="back-to-tmpl">← Back to templates</span>
+        <h2 id="ready-title">Your Website is Ready!</h2>
         <div id="live-preview" class="preview-box"></div>
     </div>
 
     <div id="pricing-screen" class="hidden">
-        <span class="back-link" onclick="closePricing()">← Back to builder</span>
+        <span class="back-link" onclick="closePricing()" id="back-to-builder">← Back to builder</span>
         <div class="grid" style="margin-top: 10px;">
             
             <div class="pricing-tier">
                 <div>
-                    <h3 style="color: #ffffff;">Start-up</h3>
-                    <p style="font-size: 12px; margin: 5px 0 0 0;">Basic setup access</p>
-                    <div class="price">$5 <span style="font-size: 14px; font-weight: normal; color: #b9bbbe;">/ 15 days</span></div>
-                    <ul class="feature-list">
+                    <h3 style="color: #ffffff;" id="tier-title-startup">Start-up</h3>
+                    <p style="font-size: 12px; margin: 5px 0 0 0;" id="tier-sub-startup">Basic setup access</p>
+                    <div class="price">$5 <span style="font-size: 14px; font-weight: normal; color: #b9bbbe;" id="tier-window-startup">/ 15 days</span></div>
+                    <ul class="feature-list" id="features-startup">
                         <li>Standard Minimal Template</li>
                         <li>Basic Contact Forms</li>
                         <li>15 Days Hosting Window</li>
                     </ul>
                 </div>
-                <button class="btn-startup" onclick="openPaymentModal('Start-up Plan', '$5.00', '15 Days Tier Access', 'https://buy.stripe.com/test_4gM6oIaSJeh2ge01drbo400')">Select Start-up</button>
+                <button class="btn-startup" id="btn-select-startup" onclick="openPaymentModal('Start-up Plan', '$5.00', '15 Days Tier Access', 'https://buy.stripe.com/test_4gM6oIaSJeh2ge01drbo400')">Select Start-up</button>
             </div>
 
             <div class="pricing-tier featured">
-                <div class="badge">POPULAR</div>
+                <div class="badge" id="premium-badge">POPULAR</div>
                 <div>
-                    <h3 style="color: #faa61a;">Premium</h3>
-                    <p style="font-size: 12px; margin: 5px 0 0 0;">Full features unlocked</p>
-                    <div class="price">$10 <span style="font-size: 14px; font-weight: normal; color: #b9bbbe;">/ month</span></div>
-                    <ul class="feature-list">
+                    <h3 style="color: #faa61a;" id="tier-title-premium">Premium</h3>
+                    <p style="font-size: 12px; margin: 5px 0 0 0;" id="tier-sub-premium">Full features unlocked</p>
+                    <div class="price">$10 <span style="font-size: 14px; font-weight: normal; color: #b9bbbe;" id="tier-window-premium">/ month</span></div>
+                    <ul class="feature-list" id="features-premium">
                         <li>All Templates Unlocked</li>
                         <li>Advanced Cyber Neon Style</li>
                         <li>Custom Website Logic</li>
                         <li>Continuous Cloud Hosting</li>
                     </ul>
                 </div>
-                <button class="btn-premium" onclick="openPaymentModal('Premium Plan', '$10.00', 'Monthly Subscription', 'https://buy.stripe.com/test_14A5kE5yp4GsbXK09nbo401')">Upgrade Premium</button>
+                <button class="btn-premium" id="btn-upgrade-premium" onclick="openPaymentModal('Premium Plan', '$10.00', 'Monthly Subscription', 'https://buy.stripe.com/test_14A5kE5yp4GsbXK09nbo401')">Upgrade Premium</button>
             </div>
 
         </div>
@@ -256,21 +305,192 @@
 
 <div id="payment-modal" class="modal-overlay hidden">
     <div class="modal-card">
-        <h3>💳 Checkout Confirmation</h3>
-        <p style="color: #4f545c; font-size: 14px;">You are upgrading to the <strong id="modal-plan-title">Plan Name</strong>.</p>
+        <h3 id="modal-header">💳 Checkout Confirmation</h3>
+        <p style="color: #4f545c; font-size: 14px;"><span id="modal-upgrading-text">You are upgrading to the</span> <strong id="modal-plan-title">Plan Name</strong>.</p>
         <div style="background: #f6f8fa; padding: 15px; border-radius: 6px; margin: 15px 0; border: 1px solid #e1e4e8;">
             <span style="float: right; font-weight: bold; color: #2ea44f;" id="modal-plan-price">$0.00</span>
             <span id="modal-plan-type">Subscription Term</span>
         </div>
         
         <button id="modal-pay-button" class="modal-action-btn" onclick="redirectToStripe()">Proceed to Secure Payment</button>
-        <button class="modal-close" onclick="closePaymentModal()">Cancel and Go Back</button>
+        <button class="modal-close" onclick="closePaymentModal()" id="modal-cancel-btn">Cancel and Go Back</button>
     </div>
 </div>
 
 <script>
     let previousScreen = 'start-screen';
     let activeStripeUrl = '';
+    let currentLang = 'en';
+
+    const translations = {
+        en: {
+            langBtn: "العربية",
+            plans: "Plans",
+            startSubtitle: "Create a website for your business.",
+            btnManual: "Build It Myself",
+            btnAi: "Build With AI",
+            tipTitle: "📲 Install App Shortcut:",
+            tipIos: "• <strong>iPhone:</strong> Open this link in the real <span style='color:#00ffff;'>Safari app</span>, tap the <strong>Share button</strong> (square with up arrow), scroll down and tap <strong>\"Add to Home Screen\"</strong>.",
+            tipAndroid: "• <strong>Android:</strong> Tap the \"Add to Home screen\" pop-up banner at the bottom of Chrome.",
+            backMain: "← Back to main menu",
+            lblBizName: "Business Name",
+            lblBizType: "Business Type",
+            lblBizPhone: "Phone Number",
+            lblBizEmail: "Email Address",
+            lblBizDesc: "Business Description",
+            phBizName: "e.g., My Business Name",
+            phBizPhone: "e.g., +971 50 123 4567",
+            phBizEmail: "e.g., info@mybusiness.com",
+            phBizDesc: "Describe what your business does...",
+            optCar: "Car Wash",
+            optRes: "Restaurant",
+            optSal: "Salon",
+            optGym: "Gym",
+            btnNextTemplate: "Next: Choose Template →",
+            backInfo: "← Back to business info",
+            tmplSubtitle: "Pick a template setup to match your company structure.",
+            tmplTitle1: "Minimal Stark",
+            tmplDesc1: "Clean layout focusing heavily on info.",
+            tmplTitle2: "Cyber Neon",
+            tmplDesc2: "Dark modern design with glowing styles.",
+            backTmpl: "← Back to templates",
+            readyTitle: "Your Website is Ready!",
+            backBuilder: "← Back to builder",
+            tierTitleStartup: "Start-up",
+            tierSubStartup: "Basic setup access",
+            tierWindowStartup: "/ 15 days",
+            btnSelectStartup: "Select Start-up",
+            featuresStartup: `<li>Standard Minimal Template</li><li>Basic Contact Forms</li><li>15 Days Hosting Window</li>`,
+            premiumBadge: "POPULAR",
+            tierTitlePremium: "Premium",
+            tierSubPremium: "Full features unlocked",
+            tierWindowPremium: "/ month",
+            btnUpgradePremium: "Upgrade Premium",
+            featuresPremium: `<li>All Templates Unlocked</li><li>Advanced Cyber Neon Style</li><li>Custom Website Logic</li><li>Continuous Cloud Hosting</li>`,
+            modalHeader: "💳 Checkout Confirmation",
+            modalUpgrading: "You are upgrading to the",
+            modalPay: "Proceed to Secure Payment",
+            modalCancel: "Cancel and Go Back"
+        },
+        ar: {
+            langBtn: "English",
+            plans: "الخطط والأسعار",
+            startSubtitle: "أنشئ موقعًا إلكترونيًا لشركتك واقترب من عملائك.",
+            btnManual: "بناء الموقع بنفسي",
+            btnAi: "البناء بواسطة الذكاء الاصطناعي",
+            tipTitle: "📲 تثبيت اختصار التطبيق:",
+            tipIos: "• <strong>آيفون:</strong> افتح هذا الرابط في تطبيق <span style='color:#00ffff;'>Safari</span>، واضغط على <strong>زر المشاركة</strong>، ثم اختر <strong>\"إضافة إلى الشاشة الرئيسية\"</strong>.",
+            tipAndroid: "• <strong>أندرويد:</strong> اضغط على لافتة \"إضافة إلى الشاشة الرئيسية\" أسفل متصفح Chrome.",
+            backMain: "← العودة للقائمة الرئيسية",
+            lblBizName: "اسم الشركة / النشاط التجاري",
+            lblBizType: "نوع النشاط",
+            lblBizPhone: "رقم الهاتف",
+            lblBizEmail: "البريد الإلكتروني",
+            lblBizDesc: "وصف العمل والخدمات",
+            phBizName: "مثال: مغسلة السيارات السريعة",
+            phBizPhone: "مثال: 4567 123 50 971+",
+            phBizEmail: "مثال: info@mybusiness.com",
+            phBizDesc: "اكتب نبذة مختصرة عن الخدمات التي تقدمها لعملائك...",
+            optCar: "مغسلة سيارات",
+            optRes: "مطعم / مقهى",
+            optSal: "صالون حلاقة وتجميل",
+            optGym: "صالة رياضية / جيم",
+            btnNextTemplate: "التالي: اختيار القالب ←",
+            backInfo: "← العودة لبيانات الشركة",
+            tmplSubtitle: "اختر الهيكل والتصميم المناسبين لهوية موقعك.",
+            tmplTitle1: "مينيمال كلاسيك (بسيط)",
+            tmplDesc1: "تصميم نظيف وهادئ يركز بالكامل على معلومات العمل الأساسية.",
+            tmplTitle2: "سايبر نيون (عصري)",
+            tmplDesc2: "تصميم داكن حديث ومميز مع لمسات إضاءة نيون متوهجة.",
+            backTmpl: "← العودة للقوالب",
+            readyTitle: "موقعك الإلكتروني جاهز الآن!",
+            backBuilder: "← العودة للمنصة",
+            tierTitleStartup: "بداية التشغيل",
+            tierSubStartup: "دخول أساسي للمنصة والمميزات",
+            tierWindowStartup: "/ 15 يومًا",
+            btnSelectStartup: "اختيار خطة التشغيل",
+            featuresStartup: `<li>قالب كلاسيكي بسيط موحد</li><li>استمارات تواصل أساسية للعملاء</li><li>استضافة سحابية مؤقتة لمدة 15 يومًا</li>`,
+            premiumBadge: "الأكثر طلبًا",
+            tierTitlePremium: "بريميوم (المميزة)",
+            tierSubPremium: "فتح جميع الأدوات والخصائص بالكامل",
+            tierWindowPremium: "/ شهرياً",
+            btnUpgradePremium: "الترقية للباقة المميزة",
+            featuresPremium: `<li>إمكانية استخدام جميع القوالب الحالية والمستقبلية</li><li>تصميم النيون المتطور والمخصص</li><li>أدوات برمجية متقدمة للموقع</li><li>استضافة سحابية مستمرة بدون انقطاع</li>`,
+            modalHeader: "💳 تأكيد عملية الدفع الآمنة",
+            modalUpgrading: "أنت الآن تقوم بالترقية إلى",
+            modalPay: "الانتقال إلى الدفع الآمن عبر Stripe",
+            modalCancel: "إلغاء والعودة للخلف"
+        }
+    };
+
+    function toggleLanguage() {
+        currentLang = currentLang === 'en' ? 'ar' : 'en';
+        const data = translations[currentLang];
+        const container = document.getElementById('main-container');
+
+        if (currentLang === 'ar') {
+            container.classList.add('rtl');
+        } else {
+            container.classList.remove('rtl');
+        }
+
+        // Apply translations to layout targets
+        document.getElementById('lang-toggle-btn').innerText = data.langBtn;
+        document.getElementById('nav-plans').innerText = data.plans;
+        document.getElementById('start-subtitle').innerText = data.startSubtitle;
+        document.getElementById('btn-manual').innerText = data.btnManual;
+        document.getElementById('btn-ai').innerText = data.btnAi;
+        document.getElementById('tip-title').innerText = data.tipTitle;
+        document.getElementById('tip-desc-ios').innerHTML = data.tipIos;
+        document.getElementById('tip-desc-android').innerHTML = data.tipAndroid;
+        document.getElementById('back-to-main').innerText = data.backMain;
+        
+        document.getElementById('lbl-biz-name').innerText = data.lblBizName;
+        document.getElementById('lbl-biz-type').innerText = data.lblBizType;
+        document.getElementById('lbl-biz-phone').innerText = data.lblBizPhone;
+        document.getElementById('lbl-biz-email').innerText = data.lblBizEmail;
+        document.getElementById('lbl-biz-desc').innerText = data.lblBizDesc;
+        
+        document.getElementById('biz-name').placeholder = data.phBizName;
+        document.getElementById('biz-phone').placeholder = data.phBizPhone;
+        document.getElementById('biz-email').placeholder = data.phBizEmail;
+        document.getElementById('biz-desc').placeholder = data.phBizDesc;
+        
+        document.getElementById('opt-carwash').innerText = data.optCar;
+        document.getElementById('opt-restaurant').innerText = data.optRes;
+        document.getElementById('opt-salon').innerText = data.optSal;
+        document.getElementById('opt-gym').innerText = data.optGym;
+        
+        document.getElementById('btn-next-template').innerText = data.btnNextTemplate;
+        document.getElementById('back-to-info').innerText = data.backInfo;
+        document.getElementById('template-subtitle').innerText = data.tmplSubtitle;
+        document.getElementById('tmpl-title-1').innerText = data.tmplTitle1;
+        document.getElementById('tmpl-desc-1').innerText = data.tmplDesc1;
+        document.getElementById('tmpl-title-2').innerText = data.tmplTitle2;
+        document.getElementById('tmpl-desc-2').innerText = data.tmplDesc2;
+        
+        document.getElementById('back-to-tmpl').innerText = data.backTmpl;
+        document.getElementById('ready-title').innerText = data.readyTitle;
+        document.getElementById('back-to-builder').innerText = data.backBuilder;
+        
+        document.getElementById('tier-title-startup').innerText = data.tierTitleStartup;
+        document.getElementById('tier-sub-startup').innerText = data.tierSubStartup;
+        document.getElementById('tier-window-startup').innerText = data.tierWindowStartup;
+        document.getElementById('btn-select-startup').innerText = data.btnSelectStartup;
+        document.getElementById('features-startup').innerHTML = data.featuresStartup;
+        
+        document.getElementById('premium-badge').innerText = data.premiumBadge;
+        document.getElementById('tier-title-premium').innerText = data.tierTitlePremium;
+        document.getElementById('tier-sub-premium').innerText = data.tierSubPremium;
+        document.getElementById('tier-window-premium').innerText = data.tierWindowPremium;
+        document.getElementById('btn-upgrade-premium').innerText = data.btnUpgradePremium;
+        document.getElementById('features-premium').innerHTML = data.featuresPremium;
+        
+        document.getElementById('modal-header').innerText = data.modalHeader;
+        document.getElementById('modal-upgrading-text').innerText = data.modalUpgrading;
+        document.getElementById('modal-pay-button').innerText = data.modalPay;
+        document.getElementById('modal-cancel-btn').innerText = data.modalCancel;
+    }
 
     function showForm(mode) {
         document.getElementById('start-screen').classList.add('hidden');
@@ -300,32 +520,40 @@
         document.getElementById('generation-screen').classList.remove('hidden');
         previousScreen = 'generation-screen';
 
-        let name = document.getElementById('biz-name').value || "My Business";
-        let type = document.getElementById('biz-type').value;
-        let phone = document.getElementById('biz-phone').value || "No phone provided";
-        let email = document.getElementById('biz-email').value || "No email provided";
-        let desc = document.getElementById('biz-desc').value || "Welcome to our official business portal.";
+        let name = document.getElementById('biz-name').value || (currentLang === 'en' ? "My Business" : "مشروعي التجاري");
+        let typeSelect = document.getElementById('biz-type');
+        let type = typeSelect.options[typeSelect.selectedIndex].text;
+        let phone = document.getElementById('biz-phone').value || (currentLang === 'en' ? "No phone provided" : "لم يتم تقديم هاتف");
+        let email = document.getElementById('biz-email').value || (currentLang === 'en' ? "No email provided" : "لم يتم تقديم بريد إلكتروني");
+        let desc = document.getElementById('biz-desc').value || (currentLang === 'en' ? "Welcome to our official business portal." : "مرحبًا بكم في موقعنا الرسمي.");
 
         let previewArea = document.getElementById('live-preview');
         previewArea.className = "preview-box"; 
+        
+        if (currentLang === 'ar') {
+            previewArea.style.direction = 'rtl';
+        } else {
+            previewArea.style.direction = 'ltr';
+        }
 
         if (styleName === 'neon') {
             previewArea.classList.add('preview-neon');
         }
 
+        const labels = currentLang === 'en' ? { call: "Call Us", email: "Email Us" } : { call: "اتصل بنا", email: "راسلنا إلكترونياً" };
+
         previewArea.innerHTML = `
             <h2 style="margin:0;">${name}</h2>
-            <p style="font-style: italic; font-size:14px;">Professional ${type} Services</p>
+            <p style="font-style: italic; font-size:14px;">${type}</p>
             <hr style="border-color: currentColor; margin: 15px 0;">
             <p>${desc}</p>
-            <div style="margin-top: 20px; font-size: 13px; text-align: left;">
-                <strong>📞 Call Us:</strong> ${phone}<br>
-                <strong>✉️ Email Us:</strong> ${email}
+            <div style="margin-top: 20px; font-size: 13px; text-align: ${currentLang === 'ar' ? 'right' : 'left'};">
+                <strong>📞 ${labels.call}:</strong> ${phone}<br>
+                <strong>✉️ ${labels.email}:</strong> ${email}
             </div>
         `;
     }
 
-    // Nav pricing handlers
     function openPricing() {
         document.getElementById('start-screen').classList.add('hidden');
         document.getElementById('form-screen').classList.add('hidden');
@@ -341,11 +569,23 @@
         document.getElementById(previousScreen).classList.remove('hidden');
     }
 
-    // Modal popup system configurations
     function openPaymentModal(planTitle, planPrice, planType, stripeUrl) {
-        document.getElementById('modal-plan-title').innerText = planTitle;
+        let displayTitle = planTitle;
+        let displayType = planType;
+        
+        if (currentLang === 'ar') {
+            if (planTitle.includes('Start-up')) {
+                displayTitle = "باقة بداية التشغيل";
+                displayType = "دخول لفترة 15 يوماً";
+            } else {
+                displayTitle = "الباقة المميزة (بريميوم)";
+                displayType = "اشتراك شهري تلقائي";
+            }
+        }
+        
+        document.getElementById('modal-plan-title').innerText = displayTitle;
         document.getElementById('modal-plan-price').innerText = planPrice;
-        document.getElementById('modal-plan-type').innerText = planType;
+        document.getElementById('modal-plan-type').innerText = displayType;
         activeStripeUrl = stripeUrl;
         document.getElementById('payment-modal').classList.remove('hidden');
     }
@@ -358,7 +598,7 @@
         if(activeStripeUrl && !activeStripeUrl.includes('your_')) {
             window.open(activeStripeUrl, '_blank');
         } else {
-            alert("Payment link configuration needed!");
+            alert(currentLang === 'en' ? "Payment link missing!" : "رابط الدفع غير متوفر!");
         }
     }
 </script>
