@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SBN Nexus SmartBuilder</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#1e1e1e">
+    <meta name="apple-mobile-web-app-title" content="SBN">
+    <link rel="apple-touch-icon" href="icon.png">
+
+    <style>
+        /* Dark Theme Base styling (Obsidian Dark Background) */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #151618; /* Obsidian deep base */
+            color: #dcddde;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+        }
+        
+        .container {
+            background: #202225; /* Dark container card */
+            padding: 40px;
+            border-radius: 12px;
+            border: 1px solid #2f3136;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            max-width: 600px;
+            width: 100%;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .header-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #2f3136;
+            padding-bottom: 15px;
+        }
+
+        /* Branding SBN Colors - High Contrast Visibility */
+        .brand-s { color: #00ffff; font-weight: bold; text-shadow: 0 0 10px rgba(0, 255, 255, 0.2); } /* Electric Cyan */
+        .brand-b { color: #e5e4e2; font-weight: bold; } /* Platinum Silver */
+        .brand-n { color: #b967ff; font-weight: bold; text-shadow: 0 0 10px rgba(185, 103, 255, 0.2); } /* Electric Purple */
+
+        .premium-link {
+            color: #faa61a;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .premium-link:hover { color: #e09415; }
+
+        h1, h2, h3 { color: #ffffff; font-weight: 600; margin: 0; }
+        p { color: #b9bbbe; line-height: 1.5; margin-top: 10px; }
+
+        .btn-group { display: flex; gap: 15px; justify-content: center; margin-top: 20px; }
+        .btn {
+            background-color: #4f545c; color: #ffffff; padding: 14px 24px;
+            border: 1px solid #686d73; border-radius: 6px; cursor: pointer;
+            font-size: 15px; transition: all 0.2s ease; flex: 1;
+        }
+        .btn:hover { background-color: #686d73; border-color: #8e9297; }
+        .btn-primary { background-color: #7289da; border: none; }
+        .btn-primary:hover { background-color: #677bc4; }
+        .btn-premium { background-color: #faa61a; color: #1e1e1e; font-weight: bold; border: none; width: 100%; padding: 16px; font-size: 16px; border-radius: 6px; cursor: pointer;}
+
+        .back-link { display: inline-block; color: #a3a6aa; font-size: 14px; margin-bottom: 20px; cursor: pointer; }
+        .back-link:hover { color: #ffffff; }
+        
+        .form-group { text-align: left; margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-size: 14px; color: #b9bbbe; }
+        input, select, textarea { width: 100%; padding: 12px; background-color: #18191c; color: #dcddde; border: 1px solid #2f3136; border-radius: 6px; box-sizing: border-box; }
+        input:focus, select:focus, textarea:focus { border-color: #7289da; outline: none; }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .card { background-color: #18191c; border: 2px solid #2f3136; border-radius: 8px; padding: 20px; text-align: left; cursor: pointer; }
+        .card:hover { border-color: #7289da; }
+
+        .pay-box { background-color: #18191c; border: 1px solid #2f3136; border-radius: 10px; padding: 30px; text-align: center; margin-top: 20px; }
+        .price { font-size: 36px; color: #ffffff; font-weight: bold; margin: 15px 0; }
+
+        .preview-box {
+            background-color: #ffffff;
+            color: #1e1e1e;
+            padding: 30px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .preview-neon {
+            background-color: #0c0f1d !important;
+            color: #00ffff !important;
+            border: 2px solid #ff007f;
+        }
+        .preview-neon h2 { color: #ff007f !important; }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-nav" id="main-nav">
+        <h2>
+            <span class="brand-s">S</span><span class="brand-b">B</span><span class="brand-n">N</span> 
+            <span style="color: #ffffff; font-weight: 400;">Nexus</span>
+        </h2>
+        <span class="premium-link" onclick="openPremium()">Premium</span>
+    </div>
+
+    <div id="start-screen">
+        <p>Create a website for your business.</p>
+        <div class="btn-group">
+            <button class="btn" onclick="showForm('manual')">Build It Myself</button>
+            <button class="btn btn-primary" onclick="showForm('ai')">Build With AI</button>
+        </div>
+    </div>
+
+    <div id="form-screen" class="hidden">
+        <span class="back-link" onclick="goBack('start-screen', 'form-screen')">← Back to main menu</span>
+        <form id="biz-form">
+            <div class="form-group"><label>Business Name</label><input type="text" id="biz-name" placeholder="e.g., My Business Name" required></div>
+            <div class="form-group">
+                <label>Business Type</label>
+                <select id="biz-type">
+                    <option value="Car Wash">Car Wash</option>
+                    <option value="Restaurant">Restaurant</option>
+                    <option value="Salon">Salon</option>
+                    <option value="Gym">Gym</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Phone Number</label><input type="tel" id="biz-phone" placeholder="e.g., +971 50 123 4567"></div>
+            <div class="form-group"><label>Email Address</label><input type="email" id="biz-email" placeholder="e.g., info@mybusiness.com"></div>
+            <div class="form-group" id="desc-group"><label>Business Description</label><textarea id="biz-desc" rows="3" placeholder="Describe what your business does..."></textarea></div>
+            <button type="button" class="btn btn-primary" style="width: 100%;" onclick="goToTemplates()">Next: Choose Template →</button>
+        </form>
+    </div>
+
+    <div id="template-screen" class="hidden">
+        <span class="back-link" onclick="goBack('form-screen', 'template-screen')">← Back to business info</span>
+        <p>Pick a template setup to match your company structure.</p>
+        <div class="grid">
+            <div class="card" onclick="generateWebsite('minimal')"><h3>Minimal Stark</h3><p style="font-size: 13px;">Clean layout focusing heavily on info.</p></div>
+            <div class="card" onclick="generateWebsite('neon')"><h3>Cyber Neon</h3><p style="font-size: 13px;">Dark modern design with glowing styles.</p></div>
+        </div>
+    </div>
+
+    <div id="generation-screen" class="hidden">
+        <span class="back-link" onclick="goBack('template-screen', 'generation-screen')">← Back to templates</span>
+        <h2>Your Website is Ready!</h2>
+        <div id="live-preview" class="preview-box"></div>
+    </div>
+
+    <div id="premium-screen" class="hidden">
+        <span class="back-link" onclick="closePremium()">← Back to builder</span>
+        <div class="pay-box">
+            <h3 style="color: #faa61a;">Premium Plan</h3>
+            <p>Access all templates and custom logic features.</p>
+            <div class="price">$9 / month</div>
+            <a href="https://buy.stripe.com/mock_payment_link" target="_blank" style="text-decoration: none;">
+                <button class="btn btn-premium">Upgrade Now</button>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    let previousScreen = 'start-screen';
+
+    function showForm(mode) {
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('form-screen').classList.remove('hidden');
+        previousScreen = 'form-screen';
+        if (mode === 'ai') {
+            document.getElementById('desc-group').style.display = 'none';
+        } else {
+            document.getElementById('desc-group').style.display = 'block';
+        }
+    }
+
+    function goToTemplates() {
+        document.getElementById('form-screen').classList.add('hidden');
+        document.getElementById('template-screen').classList.remove('hidden');
+        previousScreen = 'template-screen';
+    }
+
+    function goBack(targetId, currentId) {
+        document.getElementById(currentId).classList.add('hidden');
+        document.getElementById(targetId).classList.remove('hidden');
+        previousScreen = targetId;
+    }
+
+    function generateWebsite(styleName) {
+        document.getElementById('template-screen').classList.add('hidden');
+        document.getElementById('generation-screen').classList.remove('hidden');
+        previousScreen = 'generation-screen';
+
+        let name = document.getElementById('biz-name').value || "My Business";
+        let type = document.getElementById('biz-type').value;
+        let phone = document.getElementById('biz-phone').value || "No phone provided";
+        let email = document.getElementById('biz-email').value || "No email provided";
+        let desc = document.getElementById('biz-desc').value || "Welcome to our official business portal.";
+
+        let previewArea = document.getElementById('live-preview');
+        previewArea.className = "preview-box"; 
+
+        if (styleName === 'neon') {
+            previewArea.classList.add('preview-neon');
+        }
+
+        previewArea.innerHTML = `
+            <h2 style="margin:0;">${name}</h2>
+            <p style="font-style: italic; font-size:14px;">Professional ${type} Services</p>
+            <hr style="border-color: currentColor; margin: 15px 0;">
+            <p>${desc}</p>
+            <div style="margin-top: 20px; font-size: 13px; text-align: left;">
+                <strong>📞 Call Us:</strong> ${phone}<br>
+                <strong>✉️ Email Us:</strong> ${email}
+            </div>
+        `;
+    }
+
+    function openPremium() {
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('form-screen').classList.add('hidden');
+        document.getElementById('template-screen').classList.add('hidden');
+        document.getElementById('generation-screen').classList.add('hidden');
+        document.getElementById('main-nav').classList.add('hidden');
+        document.getElementById('premium-screen').classList.remove('hidden');
+    }
+
+    function closePremium() {
+        document.getElementById('premium-screen').classList.add('hidden');
+        document.getElementById('main-nav').classList.remove('hidden');
+        document.getElementById(previousScreen).classList.remove('hidden');
+    }
+</script>
+
+</body>
+</html>

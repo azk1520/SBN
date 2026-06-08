@@ -1,0 +1,17 @@
+{
+  "short_name": "SmartBuilder",
+  "name": "SmartBuilder Website Creator",
+  "icons": [
+    {
+      "src": "icon.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "./index.html",
+  "background_color": "#1e1e1e",
+  "theme_color": "#2f3136",
+  "display": "standalone",
+  "orientation": "portrait"
+}
